@@ -12,13 +12,12 @@ int main(void) {
     *params = 0x0102030405060708;
     volatile uint64_t *output = (uint64_t*) output_addr;
     runHead(input_addr,output_addr,params_addr);
+    uint64_t result = 0x0102030405060708;
+    if ((result<<3) != *output) {
+        printf("val = 0x%" PRIx64 "\n", *output);
+    }
+
 	m5_dump_stats();
-    uint64_t result = 0x0102030405060708 << 3;
-
-    // if (result != *output) {
-        printf("Result mistmatched %lx", result);
-    // }
-
 	m5_exit();
     return 0;
 }
