@@ -4,7 +4,7 @@
 #define SPM
 #define CHECK
 
-#define TYPE uint64_t
-#define N 8
+#define TYPE uint32_t
+#define N 16
 
 #endif

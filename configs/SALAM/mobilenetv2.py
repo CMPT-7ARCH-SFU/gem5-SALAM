@@ -582,11 +582,11 @@ def buildClassifier(options, system, clstr):
     clstr.Linear.stream = clstr.stream_dma0.stream_in
 
 def makeHWAcc(options, system):
-    # system.head = AccCluster()
-    # buildHead(options, system, system.head)
+    system.head = AccCluster()
+    buildHead(options, system, system.head)
 
-    system.body = AccCluster()
-    buildBody(options, system, system.body)
+#    system.body = AccCluster()
+#    buildBody(options, system, system.body)
 
     # system.tail = AccCluster()
     # buildTail(options, system, system.tail)
