@@ -51,6 +51,6 @@ void top(uint64_t in_addr, uint64_t out_addr, uint64_t const_addr) {
 	*S3 = 0x01;
 
 	//Wait for all accelerators to finish before sending interrupt to CPU
-	while ((*StrDmaFlags & STR_DMA_WR_INTR) != STR_DMA_WR_INTR);
+	while ((*StrDmaFlags & 0x08) == 0x08);
 	return;
 }
