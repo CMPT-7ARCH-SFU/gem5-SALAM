@@ -1,5 +1,5 @@
 #!/bin/bash
-FLAGS="HWACC"
+FLAGS="HWACC,LLVMRuntime,StreamDma"
 DEBUG="false"
 PRINT_TO_FILE="false"
 

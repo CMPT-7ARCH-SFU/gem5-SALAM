@@ -26,7 +26,7 @@ def buildHead(options, system, clstr):
     AccConfig(clstr.top, config, ir)
     clstr._connect_hwacc(clstr.top)
     clstr.top.local = clstr.local_bus.slave
-    # clstr.top.enable_debug_msgs = True
+    clstr.top.enable_debug_msgs = True
 
     # Add the Stream DMAs
     addr = local_low + 0x0041
@@ -47,148 +47,50 @@ def buildHead(options, system, clstr):
     acc = "S1"
     config = hw_config_path + acc + ".ini"
     ir = hw_ir_path + acc + ".ll"
-    clstr.NormalConv = CommInterface(devicename=acc, gic=gic)
-    AccConfig(clstr.NormalConv, config, ir)
-    clstr._connect_hwacc(clstr.NormalConv)
-    clstr.NormalConv.stream = clstr.stream_dma0.stream_out
-    clstr.NormalConv.enable_debug_msgs = True
+    clstr.S1 = CommInterface(devicename=acc, gic=gic)
+    AccConfig(clstr.S1, config, ir)
+    clstr._connect_hwacc(clstr.S1)
+    clstr.S1.stream = clstr.stream_dma0.stream_out
+    clstr.S1.enable_debug_msgs = True
 
     addr = local_low + 0x0081
     spmRange = AddrRange(addr, addr+(160*2*3))
-    clstr.NormalConvBuffer = ScratchpadMemory(range=spmRange)
-    clstr.NormalConvBuffer.conf_table_reported = False
-    clstr.NormalConvBuffer.ready_mode=True
-    clstr.NormalConvBuffer.port = clstr.local_bus.master
+    clstr.S1Buffer = ScratchpadMemory(range=spmRange)
+    clstr.S1Buffer.conf_table_reported = False
+    clstr.S1Buffer.ready_mode=True
+    clstr.S1Buffer.port = clstr.local_bus.master
     for i in range(1):
-        clstr.NormalConv.spm = clstr.NormalConvBuffer.spm_ports
-
-    addr = local_low + 0x0441
-    spmRange = AddrRange(addr, addr+27)
-    clstr.NormalConvWindow = ScratchpadMemory(range=spmRange)
-    clstr.NormalConvWindow.conf_table_reported = False
-    clstr.NormalConvWindow.ready_mode=True
-    clstr.NormalConvWindow.port = clstr.local_bus.master
-    for i in range(27):
-        clstr.NormalConv.spm = clstr.NormalConvWindow.spm_ports
-
-    addr = local_low + 0x045C
-    spmRange = AddrRange(addr, addr+(24*27))
-    clstr.NormalConvWeights = ScratchpadMemory(range=spmRange)
-    clstr.NormalConvWeights.conf_table_reported = False
-    clstr.NormalConvWeights.ready_mode=True
-    clstr.NormalConvWeights.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.NormalConv.spm = clstr.NormalConvWeights.spm_ports
-
-    addr = local_low + 0x06E4
-    spmRange = AddrRange(addr, addr+(24*6))
-    clstr.NormalConvQParams = ScratchpadMemory(range=spmRange)
-    clstr.NormalConvQParams.conf_table_reported = False
-    clstr.NormalConvQParams.ready_mode=True
-    clstr.NormalConvQParams.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.NormalConv.spm = clstr.NormalConvQParams.spm_ports
+        clstr.S1.spm = clstr.S1Buffer.spm_ports
 
     addr = local_low + 0x0774
-    clstr.NormalConvOut = StreamBuffer(stream_address=addr, stream_size=1, buffer_size=8)
-    clstr.NormalConv.stream = clstr.NormalConvOut.stream_in
+    clstr.S1Out = StreamBuffer(stream_address=addr, stream_size=1, buffer_size=8)
+    clstr.S1.stream = clstr.S1Out.stream_in
 
     # Add the Depthwise Convolution
     acc = "S2"
     config = hw_config_path + acc + ".ini"
     ir = hw_ir_path + acc + ".ll"
-    clstr.DWConv = CommInterface(devicename=acc, gic=gic)
-    AccConfig(clstr.DWConv, config, ir)
-    clstr._connect_hwacc(clstr.DWConv)
-    clstr.DWConv.stream = clstr.NormalConvOut.stream_out
-
-    addr = local_low + 0x0775
-    spmRange = AddrRange(addr, addr+(80*2*24))
-    clstr.DWConvBuffer = ScratchpadMemory(range=spmRange)
-    clstr.DWConvBuffer.conf_table_reported = False
-    clstr.DWConvBuffer.ready_mode=True
-    clstr.DWConvBuffer.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.DWConv.spm = clstr.DWConvBuffer.spm_ports
-
-    addr = local_low + 0x1675
-    spmRange = AddrRange(addr, addr+(9*24))
-    clstr.DWConvWindow = ScratchpadMemory(range=spmRange)
-    clstr.DWConvWindow.conf_table_reported = False
-    clstr.DWConvWindow.ready_mode=True
-    clstr.DWConvWindow.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.DWConv.spm = clstr.DWConvWindow.spm_ports
-
-    addr = local_low + 0x174D
-    spmRange = AddrRange(addr, addr+24)
-    clstr.DWConvOutBuffer = ScratchpadMemory(range=spmRange)
-    clstr.DWConvOutBuffer.conf_table_reported = False
-    clstr.DWConvOutBuffer.ready_mode=True
-    clstr.DWConvOutBuffer.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.DWConv.spm = clstr.DWConvOutBuffer.spm_ports
-
-    addr = local_low + 0x1765
-    spmRange = AddrRange(addr, addr+(24*10))
-    clstr.DWConvWeights = ScratchpadMemory(range=spmRange)
-    clstr.DWConvWeights.conf_table_reported = False
-    clstr.DWConvWeights.ready_mode=True
-    clstr.DWConvWeights.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.DWConv.spm = clstr.DWConvWeights.spm_ports
-
-    addr = local_low + 0x1855
-    spmRange = AddrRange(addr, addr+(24*6))
-    clstr.DWConvQParams = ScratchpadMemory(range=spmRange)
-    clstr.DWConvQParams.conf_table_reported = False
-    clstr.DWConvQParams.ready_mode=True
-    clstr.DWConvQParams.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.DWConv.spm = clstr.DWConvQParams.spm_ports
+    clstr.S2 = CommInterface(devicename=acc, gic=gic)
+    AccConfig(clstr.S2, config, ir)
+    clstr._connect_hwacc(clstr.S2)
+    clstr.S2.stream = clstr.S1Out.stream_out
+    
 
     addr = local_low + 0x18E5
-    clstr.DWConvOut = StreamBuffer(stream_address=addr, stream_size=1, buffer_size=8)
-    clstr.DWConv.stream = clstr.DWConvOut.stream_in
-
+    clstr.S2Out = StreamBuffer(stream_address=addr, stream_size=1, buffer_size=8)
+    clstr.S2.stream = clstr.S2Out.stream_in
+    clstr.S2.enable_debug_msgs = True
+    
     # Add the Pointwise Convolution
     acc = "S3"
     config = hw_config_path + acc + ".ini"
     ir = hw_ir_path + acc + ".ll"
-    clstr.PWConv = CommInterface(devicename=acc, gic=gic)
-    AccConfig(clstr.PWConv, config, ir)
-    clstr._connect_hwacc(clstr.PWConv)
-    clstr.PWConv.stream = clstr.DWConvOut.stream_out
-
-    addr = local_low + 0x18E6
-    spmRange = AddrRange(addr, addr+24)
-    clstr.PWConvLocalFeat = ScratchpadMemory(range=spmRange)
-    clstr.PWConvLocalFeat.conf_table_reported = False
-    clstr.PWConvLocalFeat.ready_mode=True
-    clstr.PWConvLocalFeat.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.PWConv.spm = clstr.PWConvLocalFeat.spm_ports
-
-    addr = local_low + 0x18FE
-    spmRange = AddrRange(addr, addr+(24*16))
-    clstr.PWConvWeights = ScratchpadMemory(range=spmRange)
-    clstr.PWConvWeights.conf_table_reported = False
-    clstr.PWConvWeights.ready_mode=True
-    clstr.PWConvWeights.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.PWConv.spm = clstr.PWConvWeights.spm_ports
-
-    addr = local_low + 0x1A7E
-    spmRange = AddrRange(addr, addr+(16*6))
-    clstr.PWConvQParams = ScratchpadMemory(range=spmRange)
-    clstr.PWConvQParams.conf_table_reported = False
-    clstr.PWConvQParams.ready_mode=True
-    clstr.PWConvQParams.port = clstr.local_bus.master
-    for i in range(1):
-        clstr.PWConv.spm = clstr.PWConvQParams.spm_ports
-
-    clstr.PWConv.stream = clstr.stream_dma0.stream_in
-
+    clstr.S3 = CommInterface(devicename=acc, gic=gic)
+    AccConfig(clstr.S3, config, ir)
+    clstr._connect_hwacc(clstr.S3)
+    clstr.S3.stream = clstr.S2Out.stream_out
+    clstr.S3.stream = clstr.stream_dma0.stream_in
+    clstr.S3.enable_debug_msgs = True
 
 def makeHWAcc(options, system):
     system.head = AccCluster()
