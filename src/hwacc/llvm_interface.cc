@@ -210,10 +210,12 @@ LLVMInterface::tick() {
             } else {
                 if (reservation.at(i)->_OpCode == "ret"){
                     if (i==0 && computeQueue.empty() && readQueue.empty() && writeQueue.empty()) {
-                        if (dbg) DPRINTF(LLVMInterface, "Simulation Complete \n");
-                        running = false;
-                        finalize();
-                        comm->finish();
+                      auto it = reservation.erase(reservation.begin() + i);
+                      if (dbg)
+                        DPRINTF(LLVMInterface, "Simulation Complete \n");
+                      running = false;
+                      finalize();
+                      comm->finish();
                     }
                 }
                 i++;
