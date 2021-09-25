@@ -1018,10 +1018,13 @@ Select::compute() {
 			else _Result = _Ops.at(1);
 		} else {
 			if (_debug) DPRINTF(LLVMOp, "False Condition!\n");
-			if(_Imm.at(1)) _Result = _ImmValues.at(1);
-			else if(_Imm.at(0)) _Result = _Ops.at(1);
-			else _Result = _Ops.at(2);
-		}
+			if(_Imm.at(1)) {
+                          _Result = _ImmValues[1];
+                        } else if (_Imm.at(0)) {
+                          _Result = _Ops.at(1);
+                        } else
+                          _Result = _Ops.at(2);
+                }
 	}
 	if (_debug) DPRINTF(LLVMOp, "Selected Value: %i\n", _Result);
 	setResult(&_Result);

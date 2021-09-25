@@ -1813,12 +1813,18 @@ class Select : public Other {
                             FunctionalUnit)
         , _Condition (      Condition)
         , _RegValues (      RegValues)
-        , _ImmValues (      ImmValues)
+     //   , _ImmValues (      ImmValues)
         , _Imm (            Imm) {
-                            Details("Select"); }
+                            Details("Select");
+                            for (auto &i : ImmValues) {
+                                _ImmValues.push_back(i);
+                              std::cout << i << " In Ins";
+                            }
+                            }
         ~Select()         { Destruct("Select"); }
         void compute()      override;
-        std::shared_ptr<Select> clone() const { return std::static_pointer_cast<Select>(createClone()); }
+        std::shared_ptr<Select> clone() const {
+          return std::static_pointer_cast<Select>(createClone()); }
         virtual std::shared_ptr<InstructionBase> createClone() const override { return std::shared_ptr<Select>(new Select(*this)); }
 };
 // ---- Other Sub Type ---- Compare
