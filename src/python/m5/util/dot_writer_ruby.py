@@ -52,7 +52,7 @@ def _dot_rgb_to_html(r, g, b):
 def _dot_create_router_node(full_path, label):
     return pydot.Node( \
                          full_path, \
-                         shape = "Mrecord", \
+                         shape = "none", \
                          label = label, \
                          style = "\"rounded, filled\"", \
                          color = "#000000", \
@@ -65,7 +65,7 @@ def _dot_create_router_node(full_path, label):
 def _dot_create_ctrl_node(full_path, label):
     return pydot.Node( \
                          full_path, \
-                         shape = "Mrecord", \
+                         shape = "none", \
                          label = label, \
                          style = "\"rounded, filled\"", \
                          color = "#000000", \
